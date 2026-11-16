@@ -24,5 +24,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index),
     path('user', views.save_user),
-    path('animal', views.save_animal)
+    path('animal', views.save_animal),
+    path('comic', views.save_comic)
 ]
