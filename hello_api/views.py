@@ -5,6 +5,7 @@ from django.views.decorators.http import require_POST
 from .entities.user import User
 from .entities.animal import Animal
 from .entities.result import ResultDto
+from .entities.comics import Comics
 
 
 
@@ -55,4 +56,18 @@ def save_animal(request):
         "id": animal.id,
         "name": animal.name,
         "color": animal.color
+    }, status=201)
+
+@csrf_exempt
+@require_POST
+def save_comics(request):
+    data = json.loads(request.body)
+
+    comics = Comics(data["id"], data["titulo"], data["descripcion"], data["editorial"])
+
+    return JsonResponse({
+        "id": comics.id,
+        "titulo": comics.titulo,
+        "descripcion": comics.descripcion,
+        "editorial": comics.editorial
     }, status=201)
