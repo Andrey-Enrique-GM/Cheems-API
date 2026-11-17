@@ -1,0 +1,24 @@
+USE cheemsapi;
+SHOW TABLES;
+CREATE TABLE IF NOT EXISTS animal (
+    id INT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(67) NOT NULL,
+    color VARCHAR(67),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS comic (
+    id INT NOT NULL AUTO_INCREMENT,
+    title VARCHAR(67) NOT NULL,
+    description TEXT,
+    editorial VARCHAR(67),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS user (
+    id INT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(67) NOT NULL,
+    account VARCHAR(67) NOT NULL,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_users_account (account)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
