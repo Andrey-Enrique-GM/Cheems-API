@@ -1,7 +1,11 @@
+from django.db import models
 
-class Comic:
-    def __init__(self, id, title, description, editorial):
-        self.id = id
-        self.title = title
-        self.description = description
-        self.editorial = editorial
+
+class Comic(models.Model):
+    title = models.CharField(max_length=67)
+    description = models.TextField(blank=True)
+    editorial = models.CharField(max_length=67, blank=True)
+
+    class Meta:
+        db_table = "comic"
+        app_label = "hello_api"

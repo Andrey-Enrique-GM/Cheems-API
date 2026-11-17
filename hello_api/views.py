@@ -65,7 +65,7 @@ def save_comic(request):
     data = json.loads(request.body)
 
     comic = Comic(data["id"], data["title"], data["description"], data["editorial"])
-
+    comic.save()
     return JsonResponse({
         "id": comic.id,
         "title": comic.title,
