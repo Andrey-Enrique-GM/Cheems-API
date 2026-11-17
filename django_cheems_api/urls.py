@@ -25,5 +25,6 @@ urlpatterns = [
     path('', views.index),
     path('user', views.save_user),
     path('animal', views.save_animal),
-    path('comic', views.save_comic)
+    path('comic', views.save_comic),
+    path("comics", views.get_all_comics)
 ]

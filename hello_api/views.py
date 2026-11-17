@@ -1,7 +1,7 @@
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 from .entities.user import User
 from .entities.animal import Animal
 from .entities.comic import Comic
@@ -64,11 +64,19 @@ def save_animal(request):
 def save_comic(request):
     data = json.loads(request.body)
 
-    comic = Comic(data["id"], data["title"], data["description"], data["editorial"])
+    comic = Comic(
+        title=data["title"],
+        description=data["description"],
+        editorial=data["editorial"],
+    )
     comic.save()
+
     return JsonResponse({
         "id": comic.id,
         "title": comic.title,
         "description": comic.description,
         "editorial": comic.editorial
     }, status=201)
+def get_all_comics(request):
+    comics = list(Comic.objects.values("id", "title", "description", "editorial"))
+    return JsonResponse(comics, safe=False)
