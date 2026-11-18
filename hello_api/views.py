@@ -26,7 +26,7 @@ def save_user(request):
 
         # Validación para evitar campos vacíos ("") o con solo espacios ("   ")
         if not str(name).strip() or not str(account).strip():
-            result = ResultDto(0, False, "El nombre y la cuenta no pueden estar vacíos.")
+            result = ResultDto(0, False, "El nombre y la cuenta no pueden estar vacios.")
             return JsonResponse(result.to_dict(), status=400)
 
         user = User(data["id"], name, account)
@@ -78,10 +78,13 @@ def save_comic(request):
         "editorial": comic.editorial
     }, status=201)
 
+
 @require_http_methods(["GET"])
 def get_all_comics(request):
     comics = list(Comic.objects.values("id", "title", "description", "editorial"))
     return JsonResponse(comics, safe=False)
+
+
 @csrf_exempt
 @require_http_methods(["GET", "PUT", "DELETE"])
 def comic_by_id(request, id):
@@ -89,7 +92,7 @@ def comic_by_id(request, id):
     try:
         comic = Comic.objects.get(id=id)
     except Comic.DoesNotExist:
-        return JsonResponse({"message": f"No existe un cómic con id {id}"}, status=404)
+        return JsonResponse({"message": f"No existe un comic con id {id}"}, status=404)
 
     # GET: obtener uno
     if request.method == "GET":
@@ -105,7 +108,7 @@ def comic_by_id(request, id):
         try:
             data = json.loads(request.body)
         except json.JSONDecodeError:
-            return JsonResponse({"message": "El JSON enviado no es válido"}, status=400)
+            return JsonResponse({"message": "El JSON enviado no es valido"}, status=400)
 
         comic.title = data.get("title", comic.title)
         comic.description = data.get("description", comic.description)
@@ -121,4 +124,4 @@ def comic_by_id(request, id):
 
     # DELETE: eliminar
     comic.delete()
-    return JsonResponse({"message": f"Cómic {id} eliminado correctamente"})
+    return JsonResponse({"message": f"Comic {id} eliminado correctamente"})
