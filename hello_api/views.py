@@ -62,6 +62,7 @@ def save_comic(request):
     # 201: creado
     return JsonResponse(comic_to_dict(comic), status=201)
 
+######################################################################
 
 @require_http_methods(["GET"])
 def get_all_comics(request):
