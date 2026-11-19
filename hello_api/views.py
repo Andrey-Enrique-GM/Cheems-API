@@ -2,12 +2,17 @@ import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_GET, require_http_methods
-from .entities.user import User
-from .entities.animal import Animal
 from .entities.comic import Comic
 from .entities.result import ResultDto
+from django.db import DatabaseError
 
-
+def comic_to_dict(comic):
+    return {
+        "id": comic.id,
+        "title": comic.title,
+        "description": comic.description,
+        "editorial": comic.editorial,
+    }
 
 def index(request):
     return JsonResponse({
@@ -17,21 +22,45 @@ def index(request):
 @csrf_exempt
 @require_POST
 def save_comic(request):
-    data = json.loads(request.body)
+    # 400: JSON inválido, se truena quitando los {}
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"message": "El JSON enviado no es valido, favor de enviarlo como formato JSON"}, status=400)
 
-    comic = Comic(
-        title=data["title"],
-        description=data["description"],
-        editorial=data["editorial"],
-    )
-    comic.save()
+    # 400: el JSON debe ser un objeto, truena si ponemos [] afuera del {}
+    if not isinstance(data, dict):
+        return JsonResponse({"message": "El cuerpo debe ser un objeto JSON"}, status=400)
 
-    return JsonResponse({
-        "id": comic.id,
-        "title": comic.title,
-        "description": comic.description,
-        "editorial": comic.editorial
-    }, status=201)
+    # 400: faltan campos obligatorios, truena si el nombre de los atributos no son correcto o si estan mal escrotos
+    required = ["title", "description", "editorial"]
+    missing = [f for f in required if f not in data]
+    if missing:
+        return JsonResponse(
+            {"message": f"Faltan campos obligatorios favor de completar o escribir bien el nombre de los atributos solo tenemos 3 atributos que ocupa escribir bien (title,description,editorial): {', '.join(missing)}"},
+            status=400,
+        )
+
+    # 422: campos con valores inválidos (vacíos o no son texto), truena si estan vacios o si quitas las comillas
+    invalid = [f for f in required if not isinstance(data[f], str) or not data[f].strip()]
+    if invalid:
+        return JsonResponse(
+            {"message": f"Los siguientes campos no son validos estan vacios o no son texto: {', '.join(invalid)}"},
+            status=422,
+        )
+
+    # 500: error al guardar en la base de datos, muy complicado de tronar, pero puede pasar si la base de datos no esta disponible o si hay un error en la base de datos
+    try:
+        comic = Comic.objects.create(
+            title=data["title"].strip(),
+            description=data["description"].strip(),
+            editorial=data["editorial"].strip(),
+        )
+    except DatabaseError:
+        return JsonResponse({"message": "Error al guardar el comic"}, status=500)
+
+    # 201: creado
+    return JsonResponse(comic_to_dict(comic), status=201)
 
 
 @require_http_methods(["GET"])

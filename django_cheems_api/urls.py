@@ -23,8 +23,6 @@ from hello_api import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index),
-    path('user', views.save_user),
-    path('animal', views.save_animal),
     path('comic', views.save_comic),
     path("comics", views.get_all_comics),
     path("comic/<int:id>", views.comic_by_id)
