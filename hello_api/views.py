@@ -6,6 +6,8 @@ from .entities.comic import Comic
 from .entities.result import ResultDto
 from django.db import DatabaseError
 
+
+
 def comic_to_dict(comic):
     return {
         "id": comic.id,
@@ -14,10 +16,13 @@ def comic_to_dict(comic):
         "editorial": comic.editorial,
     }
 
+
 def index(request):
     return JsonResponse({
         "message": "Hello world"
     })
+
+
 
 @csrf_exempt
 @require_POST
@@ -62,7 +67,6 @@ def save_comic(request):
     # 201: creado
     return JsonResponse(comic_to_dict(comic), status=201)
 
-######################################################################
 
 @require_http_methods(["GET"])
 def get_all_comics(request):
